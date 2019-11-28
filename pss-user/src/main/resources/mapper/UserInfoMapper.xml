@@ -179,4 +179,26 @@
       dimission_flag = #{dimissionFlag,jdbcType=VARCHAR}
     where uu_id = #{uuId,jdbcType=VARCHAR}
   </update>
+
+  <select id="selectUserList" resultMap="BaseResultMap" >
+    select
+    <include refid="Base_Column_List" />
+    from user_info
+  </select>
+
+  <select id="selectUserByTelPhoneAndPwd" resultMap="BaseResultMap" parameterType="com.systop.pss.mapper.dto.SelectUserAndPwdDto">
+    SELECT
+	    a.*
+    FROM
+        user_info a
+    LEFT JOIN user_password b ON a.uu_id = b.uu_id
+    WHERE
+        a.tel_phone =  #{telPhone,jdbcType=VARCHAR}
+    <if test="pwd != null" >
+      AND b.pwd =  #{pwd,jdbcType=VARCHAR}
+    </if>
+
+
+  </select>
+
 </mapper>
