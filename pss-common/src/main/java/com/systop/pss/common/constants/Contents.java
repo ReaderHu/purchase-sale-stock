@@ -23,4 +23,19 @@ public class Contents {
 	 *  "^1[1-9]\\d{9}$" ;
 	 */
 	public static final String TEL_PHONE_EXP = "^1(3|4|5|7|8)\\d{9}$" ;
+
+	/**
+	 * 数字_0
+	 */
+    public static final int INT_0 = 0;
+
+	/**
+	 * 时间格式YYYYMMDDHHSSMM
+	 */
+	public static final String DATE_PATTERN_YYYYMMDDHHSSMM = "YYYYMMDDHHSSMM";
+
+	/**
+	 * session用户
+	 */
+    public static final String SESSION_USER = "user";
 }

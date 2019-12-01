@@ -2,8 +2,13 @@ package com.systop.pss.common.constants;
 
 public enum ResultCodeEnum {
 
-	SUCCESS(true, 20000, "成功"), 
-	UNKNOWN_REASON(false, 20001, "未知错误"), 
+	SUCCESS_REGISTER(true,10000,"用户注册成功"),
+	ERROR_REGISTER(false,10001,"用户注册失败"),
+	ERROR_LOGIN(false,10002,"用户或者密码不正确，请重新输入"),
+	ERROR_TELPHONE(false,10003,"手机号格式不正确，请输入正确的手机号"),
+
+	SUCCESS(true, 20000, "成功"),
+	UNKNOWN_REASON(false, 20001, "未知错误"),
 	BAD_SQL_GRAMMAR(false, 21001, "sql语法错误"),
 	JSON_PARSE_ERROR(false, 21002, "json解析异常"), 
 	PARAM_ERROR(false, 21003, "参数不正确"),
