@@ -1,10 +1,14 @@
 package com.systop.pss.service.impl;
 
 import com.systop.pss.mapper.UserInfoMapper;
+import com.systop.pss.mapper.UserPasswordMapper;
 import com.systop.pss.model.UserInfo;
+import com.systop.pss.model.UserPassword;
 import com.systop.pss.service.UserInfoServcie;
 import com.systop.pss.service.dto.UserDto;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.HashMap;
@@ -16,6 +20,9 @@ public class UserInfoServiceImpl implements UserInfoServcie {
 
     @Resource
     private UserInfoMapper userInfoMapper;
+
+    @Resource
+    private UserPasswordMapper userPasswordMapper;
 
     @Override
     public int deleteByPrimaryKey(String uuId) {
@@ -92,5 +99,60 @@ public class UserInfoServiceImpl implements UserInfoServcie {
         UserInfo userInfo = userInfoMapper.selectUserByTelPhoneAndPwd(selectMap);
 
         return userInfo;
+    }
+
+    /**
+     * 注册用户
+     * @param userDto
+     * @return
+     */
+    @Override
+    @Transactional
+    public int register(UserDto userDto) {
+        int result = 0;
+        UserInfo userInfo = new UserInfo();
+        // 对UserInfo进行copy
+        BeanUtils.copyProperties(userDto,userInfo);
+
+        // 保存userInfo
+        result = this.insertSelective(userInfo);
+        if(result > 0) {
+            // 查询User
+            UserInfo registerUser = this.selectUserByTelPhone(userInfo.getTelPhone());
+
+            if (null == registerUser) {
+                return -1;
+            }
+
+            // 对密码进行保存
+            UserPassword userPassword = new UserPassword();
+            BeanUtils.copyProperties(userDto,userPassword);
+            userPassword.setUuId(registerUser.getUuId());
+            return userPasswordMapper.insertSelective(userPassword);
+        }
+
+        return result;
+    }
+
+    /**
+     * 获取用户密码
+     * @param uuId
+     * @return
+     */
+    @Override
+    public String selectUserPwd(String uuId) {
+        return userPasswordMapper.selectPwdByUuId(uuId);
+    }
+
+    /**
+     * 获取部门用户总数量（dept可为空）
+     * @return
+     */
+    @Override
+    public int getUserCount(String dept) {
+        Map<String,Object> selectMap = new HashMap<>();
+
+        selectMap.put("dept",dept);
+        return userInfoMapper.getUserCount(selectMap);
     }
 }

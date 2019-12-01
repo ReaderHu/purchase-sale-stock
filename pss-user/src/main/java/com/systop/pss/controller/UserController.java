@@ -2,11 +2,14 @@ package com.systop.pss.controller;
 
 import com.systop.pss.common.constants.Contents;
 import com.systop.pss.common.constants.ResultCodeEnum;
+import com.systop.pss.common.utils.CommonUtils;
 import com.systop.pss.common.vo.R;
 import com.systop.pss.controller.vo.UserVo;
+import com.systop.pss.mapper.UserPasswordMapper;
 import com.systop.pss.model.UserInfo;
 import com.systop.pss.model.UserPassword;
 import com.systop.pss.service.UserInfoServcie;
+import com.systop.pss.service.UserPasswordService;
 import com.systop.pss.service.dto.UserDto;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -15,8 +18,11 @@ import org.joda.time.DateTime;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import sun.misc.Request;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.UnsupportedEncodingException;
+import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -24,10 +30,13 @@ import java.util.regex.Pattern;
 @RestController
 @RequestMapping("/user")
 @Api(description = "用户管理")
-public class UserController {
+public class UserController extends BaseController{
 
     @Autowired
     private UserInfoServcie userInfoServcie;
+
+    @Autowired
+    private UserPasswordService userPasswordService;
 
     @RequestMapping(value = "/getList" ,method = RequestMethod.POST)
     public List<UserInfo> getList() {
@@ -42,8 +51,9 @@ public class UserController {
      * @return
      */
     @RequestMapping(value = "/login",method = RequestMethod.POST)
-    public R login(@RequestParam(value = "telPhone" ,required = true )String telPhone,
-                        @RequestParam(value = "password" ,required = true )String password) {
+    public R login(HttpServletRequest request,
+                        @RequestParam(value = "telPhone" ,required = true )String telPhone,
+                        @RequestParam(value = "password" ,required = true )String password) throws UnsupportedEncodingException, NoSuchAlgorithmException {
         if (!Pattern.matches(Contents.TEL_PHONE_EXP,telPhone)) {
             return  R.setResult(ResultCodeEnum.ERROR_TELPHONE);
         }
@@ -51,6 +61,11 @@ public class UserController {
         // 设置登录对象
         UserDto userDto = new UserDto();
         userDto.setTelPhone(telPhone);
+
+        if (!telPhone.equals(Contents.ADMIN_ACCOUNT)) {
+            password = CommonUtils.EncodeByMD5(password);
+        }
+
         userDto.setPwd(password);
 
         // 进行UserInfo查询
@@ -70,6 +85,7 @@ public class UserController {
             return  R.error().message("登录超时，请重新登录");
         }
 
+        request.getSession().setAttribute(Contents.SESSION_USER,userInfo);
         UserVo userVo = new UserVo();
         BeanUtils.copyProperties(userInfo, userVo);
 
@@ -97,7 +113,7 @@ public class UserController {
                       @RequestParam(value = "workAge",required = true)int workAge,
                       @RequestParam(value = "pwd",required = true)String pwd,
                       @RequestParam(value = "confirmPwd",required = true)String confirmPwd,
-                      @RequestParam(value = "department",required = true)String department){
+                      @RequestParam(value = "department",required = true)String department) throws UnsupportedEncodingException, NoSuchAlgorithmException {
 
         // 判断用户手机号是否正确
         if (!Pattern.matches(Contents.TEL_PHONE_EXP,telPhone)) {
@@ -119,7 +135,7 @@ public class UserController {
         // 编辑用户UUID
         String uuid = redactUserUUID();
 
-        UserInfo userInfo = new UserInfo();
+        UserDto userInfo = new UserDto();
         // UUID
         userInfo.setUuId(StringUtils.substring(uuid,0,12));
         // 用户名称
@@ -132,25 +148,25 @@ public class UserController {
         userInfo.setWorkAge(workAge);
         // 部门Code
         userInfo.setDepartment(department);
+        // 注册时间
+        userInfo.setEntryTime(new Date());
+
+        // 对密码进行md5加密
+        if (!telPhone.equals(Contents.ADMIN_ACCOUNT)) {
+            pwd = CommonUtils.EncodeByMD5(pwd);
+        }
+        // 密码
+        userInfo.setPwd(pwd);
 
         // 保存用户
-        int insertCount = userInfoServcie.insertSelective(userInfo);
+        int insertCount = userInfoServcie.register(userInfo);
 
         // 判端是否注册成功
         if (insertCount < 0 ){
             return R.setResult(ResultCodeEnum.ERROR_REGISTER);
         }
-        // 用手机号查询新登录用户的信息并放入session中
-        UserInfo sessionUserInfo = userInfoServcie.selectUserByTelPhone(telPhone);
-        request.getSession().setAttribute(Contents.SESSION_USER,sessionUserInfo);
 
-        // 保存用户密码
-        UserPassword userPassword = new UserPassword();
-        userPassword.setPwd(pwd);
-        userPassword.setUuId(sessionUserInfo.getUuId());
-
-
-        return R.setResult(ResultCodeEnum.SUCCESS_REGISTER).data(Contents.SESSION_USER,sessionUserInfo);
+        return R.setResult(ResultCodeEnum.SUCCESS_REGISTER);
     }
 
     /**
@@ -213,6 +229,81 @@ public class UserController {
             return R.ok();
         }
         return R.error();
+    }
+
+    /**
+     * 获取用户密码
+     * @return
+     */
+    @RequestMapping(value = "/getuserpwd",method = RequestMethod.POST)
+    public R getUserPwd(HttpServletRequest request,
+                            @RequestParam(value = "pwd",required = false)String pwd) throws UnsupportedEncodingException, NoSuchAlgorithmException {
+        UserInfo userInfo = (UserInfo) request.getSession().getAttribute(Contents.SESSION_USER);
+
+        String userPwd = userInfoServcie.selectUserPwd(userInfo.getUuId());
+
+        // MD5加密
+        pwd = CommonUtils.EncodeByMD5(pwd);
+        if (StringUtils.equals(pwd,userPwd)){
+            return R.setResult(ResultCodeEnum.ERROR_PASSWORD);
+        }
+        return R.ok();
+    }
+
+    /**
+     * 修改用户密码
+     * @param request
+     * @param updPwd
+     * @param updConfirmPwd
+     * @return
+     */
+    @RequestMapping(value = "/updateuserpwd",method = RequestMethod.POST)
+    public R updateUserPwd(HttpServletRequest request,
+                           @RequestParam(value = "uuId",required = false)String uuId,
+                           @RequestParam(value = "updPwd",required = true)String updPwd,
+                           @RequestParam(value = "updConfirmPwd",required = true)String updConfirmPwd) throws UnsupportedEncodingException, NoSuchAlgorithmException {
+
+        if (!StringUtils.equals(updPwd,updConfirmPwd)) {
+            return  R.setResult(ResultCodeEnum.ERROR_PASSWORD);
+        }
+        UserPassword userPassword = new UserPassword();
+        // 获取session中user信息
+        UserInfo sessionUser = (UserInfo) request.getSession().getAttribute(Contents.SESSION_USER);
+        if (null == sessionUser) {
+            return  R.setResult(ResultCodeEnum.ERROR_NOT_LOGIN);
+        }
+        // 当uuid 不为空时
+        if (StringUtils.isNotEmpty(uuId)) {
+            // 判断user是否为管理员账户
+            if (!StringUtils.equals(sessionUser.getAdminFlag(),Contents.ADMIN_FLAG_0)) {
+                return R.setResult(ResultCodeEnum.ERROR_POWER);
+            }
+            userPassword.setUuId(uuId);
+        } else {
+            userPassword.setUuId(sessionUser.getUuId());
+        }
+        userPassword.setPwd(CommonUtils.EncodeByMD5(updPwd));
+        userPassword.setUpdateTime(new Date());
+        userPassword.setUpdateUser(sessionUser.getUuId());
+
+        int updCount = userPasswordService.updateUserPwdByuuId(userPassword);
+
+        if (updCount < 0) {
+            return R.error();
+        }
+        return R.setResult(ResultCodeEnum.SUCCESS_UPDATE_PWD);
+    }
+
+    /**
+     * 获取部门用户总数量（dept可为空）
+     * @return
+     */
+    @RequestMapping(value = "/getusercount",method = RequestMethod.POST)
+    public R getUserCount(@RequestParam(value = "dept",required = false)String dept){
+
+        int userCount = userInfoServcie.getUserCount(dept);
+
+        return R.ok().data("userCount",userCount);
     }
 
     /**

@@ -29,4 +29,10 @@ public interface UserInfoMapper {
      * @return
      */
     UserInfo selectUserByTelPhoneAndPwd(Map<String, Object> selectMap);
+
+    /**
+     * 获取部门用户总数量
+     * @return
+     */
+    int getUserCount(Map<String, Object> selectMap);
 }

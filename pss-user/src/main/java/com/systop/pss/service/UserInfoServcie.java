@@ -70,4 +70,24 @@ public interface UserInfoServcie {
      * @return
      */
     UserInfo selectUserByTelPhone(String telPhone);
+
+    /**
+     * 用户注册
+     * @param userDto
+     * @return
+     */
+    int register(UserDto userDto);
+
+    /**
+     * 获取用户密码
+     * @param uuId
+     * @return
+     */
+    String selectUserPwd(String uuId);
+
+    /**
+     * 获取部门用户总数量（dept可为空）
+     * @return
+     */
+    int getUserCount(String dept);
 }

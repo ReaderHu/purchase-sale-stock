@@ -202,7 +202,7 @@
     where uu_id = #{uuId,jdbcType=VARCHAR}
   </update>
 
-  <select id="selectUserList" resultMap="BaseResultMap" >
+  <select id="selectUserList" resultMap="BaseResultMap" parameterType="java.lang.String">
     select
     <include refid="Base_Column_List" />
     from user_info
@@ -222,4 +222,15 @@
       AND b.pwd =  #{pwd,jdbcType=VARCHAR}
     </if>
   </select>
+
+  <select id="getUserCount" resultType="java.lang.Integer" >
+    select count(*) from user_info
+    <where>
+      <if test="dept != null">
+        department =  #{dept}
+      </if>
+    </where>
+
+  </select>
+
 </mapper>

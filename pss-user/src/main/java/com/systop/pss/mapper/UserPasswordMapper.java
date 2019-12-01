@@ -14,4 +14,13 @@ public interface UserPasswordMapper {
     int updateByPrimaryKeySelective(UserPassword record);
 
     int updateByPrimaryKey(UserPassword record);
+
+    String selectPwdByUuId(String uuId);
+
+    /**
+     * g根据用户id更新用户密码
+     * @param userPassword
+     * @return
+     */
+    int updatePwdByuuId(UserPassword userPassword);
 }
