@@ -4,7 +4,9 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/paa-parents/paa-parents.iml" filepath="$PROJECT_DIR$/paa-parents/paa-parents.iml" />
       <module fileurl="file://$PROJECT_DIR$/pss-common/pss-common.iml" filepath="$PROJECT_DIR$/pss-common/pss-common.iml" />
+      <module fileurl="file://$PROJECT_DIR$/pss-dataservice/pss-dataservice.iml" filepath="$PROJECT_DIR$/pss-dataservice/pss-dataservice.iml" />
       <module fileurl="file://$PROJECT_DIR$/pss-order/pss-order.iml" filepath="$PROJECT_DIR$/pss-order/pss-order.iml" />
+      <module fileurl="file://$PROJECT_DIR$/pss-timer/pss-timer.iml" filepath="$PROJECT_DIR$/pss-timer/pss-timer.iml" />
       <module fileurl="file://$PROJECT_DIR$/pss-user/pss-user.iml" filepath="$PROJECT_DIR$/pss-user/pss-user.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/purchase-sale-stock.iml" filepath="$PROJECT_DIR$/.idea/purchase-sale-stock.iml" />
     </modules>

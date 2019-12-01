@@ -6,16 +6,20 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="pss-dataservice" />
+        <module name="pss-user" />
         <module name="paa-parents" />
         <module name="pss-order" />
-        <module name="pss-user" />
+        <module name="pss-timer" />
         <module name="pss-common" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="paa-parents" target="1.8" />
       <module name="pss-common" target="1.8" />
+      <module name="pss-dataservice" target="1.8" />
       <module name="pss-order" target="1.8" />
+      <module name="pss-timer" target="1.8" />
       <module name="pss-user" target="1.8" />
     </bytecodeTargetLevel>
   </component>
@@ -23,7 +27,9 @@
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="paa-parents" options="-parameters" />
       <module name="pss-common" options="-parameters" />
+      <module name="pss-dataservice" options="-parameters" />
       <module name="pss-order" options="-parameters" />
+      <module name="pss-timer" options="-parameters" />
       <module name="pss-user" options="-parameters" />
     </option>
   </component>
