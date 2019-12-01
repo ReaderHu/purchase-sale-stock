@@ -1,6 +1,5 @@
 package com.systop.pss.service;
 
-import com.systop.pss.controller.vo.UserVo;
 import com.systop.pss.model.UserInfo;
 import com.systop.pss.service.dto.UserDto;
 
@@ -61,8 +60,14 @@ public interface UserInfoServcie {
     List<UserInfo> selectUserList();
 
     /**
-     * 根据用户手机号查询用户
+     * 用户登录鉴证
      * @param userDto
      */
-    UserDto login(UserDto userDto);
+    UserInfo login(UserDto userDto);
+
+    /**
+     * 根据手机查询用户信息
+     * @return
+     */
+    UserInfo selectUserByTelPhone(String telPhone);
 }
