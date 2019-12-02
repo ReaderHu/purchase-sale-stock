@@ -3,9 +3,13 @@ package com.systop.pss.common.constants;
 public enum ResultCodeEnum {
 
 	SUCCESS_REGISTER(true,10000,"用户注册成功"),
-	ERROR_REGISTER(false,10001,"用户注册失败"),
-	ERROR_LOGIN(false,10002,"用户或者密码不正确，请重新输入"),
-	ERROR_TELPHONE(false,10003,"手机号格式不正确，请输入正确的手机号"),
+	SUCCESS_UPDATE_PWD(true,1001,"密码更新成功"),
+	ERROR_REGISTER(false,40001,"用户注册失败"),
+	ERROR_LOGIN(false,40002,"用户或者密码不正确，请重新输入"),
+	ERROR_TELPHONE(false,40003,"手机号格式不正确，请输入正确的手机号"),
+	ERROR_PASSWORD(false,40004,"确认密码不正确，请重新输入"),
+	ERROR_POWER(false,40005,"权限不足，请登录管理员账户"),
+	ERROR_NOT_LOGIN(false,40006,"用户未登录，请登录后重试"),
 
 	SUCCESS(true, 20000, "成功"),
 	UNKNOWN_REASON(false, 20001, "未知错误"),

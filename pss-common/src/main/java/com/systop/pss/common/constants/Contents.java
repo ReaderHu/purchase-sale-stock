@@ -3,6 +3,10 @@ package com.systop.pss.common.constants;
 public class Contents {
 
 	/**
+	 * 管理员账户
+	 */
+	public static final String ADMIN_ACCOUNT = "13780492489";
+	/**
 	 *  钢排钉编号
 	 */
 	public static final Integer PRODUCT_STEEL_NAILS = 1;
@@ -38,4 +42,15 @@ public class Contents {
 	 * session用户
 	 */
     public static final String SESSION_USER = "user";
+
+	/**
+	 * 非管理员用户flag
+	 */
+	public static final String ADMIN_FLAG_1 = "1";
+
+	/**
+	 * 管理员用户flag
+	 */
+	public static final String ADMIN_FLAG_0 = "0";
+
 }

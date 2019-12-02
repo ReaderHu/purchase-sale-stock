@@ -2,6 +2,7 @@ package com.systop.pss.controller;
 
 import com.systop.pss.common.constants.Contents;
 import com.systop.pss.common.constants.ResultCodeEnum;
+import com.systop.pss.common.error.BusinessException;
 import com.systop.pss.common.utils.CommonUtils;
 import com.systop.pss.common.vo.R;
 import com.systop.pss.controller.vo.UserVo;
@@ -53,7 +54,7 @@ public class UserController extends BaseController{
     @RequestMapping(value = "/login",method = RequestMethod.POST)
     public R login(HttpServletRequest request,
                         @RequestParam(value = "telPhone" ,required = true )String telPhone,
-                        @RequestParam(value = "password" ,required = true )String password) throws UnsupportedEncodingException, NoSuchAlgorithmException {
+                        @RequestParam(value = "password" ,required = true )String password) throws BusinessException, UnsupportedEncodingException, NoSuchAlgorithmException {
         if (!Pattern.matches(Contents.TEL_PHONE_EXP,telPhone)) {
             return  R.setResult(ResultCodeEnum.ERROR_TELPHONE);
         }
@@ -113,7 +114,7 @@ public class UserController extends BaseController{
                       @RequestParam(value = "workAge",required = true)int workAge,
                       @RequestParam(value = "pwd",required = true)String pwd,
                       @RequestParam(value = "confirmPwd",required = true)String confirmPwd,
-                      @RequestParam(value = "department",required = true)String department) throws UnsupportedEncodingException, NoSuchAlgorithmException {
+                      @RequestParam(value = "department",required = true)String department) throws BusinessException, UnsupportedEncodingException, NoSuchAlgorithmException {
 
         // 判断用户手机号是否正确
         if (!Pattern.matches(Contents.TEL_PHONE_EXP,telPhone)) {
@@ -237,7 +238,7 @@ public class UserController extends BaseController{
      */
     @RequestMapping(value = "/getuserpwd",method = RequestMethod.POST)
     public R getUserPwd(HttpServletRequest request,
-                            @RequestParam(value = "pwd",required = false)String pwd) throws UnsupportedEncodingException, NoSuchAlgorithmException {
+                            @RequestParam(value = "pwd",required = false)String pwd) throws BusinessException, UnsupportedEncodingException, NoSuchAlgorithmException {
         UserInfo userInfo = (UserInfo) request.getSession().getAttribute(Contents.SESSION_USER);
 
         String userPwd = userInfoServcie.selectUserPwd(userInfo.getUuId());
@@ -261,7 +262,7 @@ public class UserController extends BaseController{
     public R updateUserPwd(HttpServletRequest request,
                            @RequestParam(value = "uuId",required = false)String uuId,
                            @RequestParam(value = "updPwd",required = true)String updPwd,
-                           @RequestParam(value = "updConfirmPwd",required = true)String updConfirmPwd) throws UnsupportedEncodingException, NoSuchAlgorithmException {
+                           @RequestParam(value = "updConfirmPwd",required = true)String updConfirmPwd) throws BusinessException, UnsupportedEncodingException, NoSuchAlgorithmException {
 
         if (!StringUtils.equals(updPwd,updConfirmPwd)) {
             return  R.setResult(ResultCodeEnum.ERROR_PASSWORD);
