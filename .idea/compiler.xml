@@ -8,10 +8,9 @@
         <outputRelativeToContentRoot value="true" />
         <module name="pss-dataservice" />
         <module name="pss-user" />
-        <module name="paa-parents" />
+        <module name="pss-common" />
         <module name="pss-order" />
         <module name="pss-timer" />
-        <module name="pss-common" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>

@@ -7,6 +7,7 @@
     <groupId>com.systop.pss</groupId>
     <artifactId>paa-parents</artifactId>
     <version>1.0.0</version>
+    <packaging>pom</packaging>
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
@@ -38,6 +39,7 @@
         <json.version>20170516</json.version>
         <pss-version>1.0.0</pss-version>
         <log4j.version>2.3</log4j.version>
+        <mysql.version>5.1.47</mysql.version>
     </properties>
 
     <dependencyManagement>
@@ -61,6 +63,13 @@
                 <groupId>org.mybatis.spring.boot</groupId>
                 <artifactId>mybatis-spring-boot-starter</artifactId>
                 <version>${mybatis.version}</version>
+            </dependency>
+
+            <!--mysql -->
+            <dependency>
+                <groupId>mysql</groupId>
+                <artifactId>mysql-connector-java</artifactId>
+                <version>${mysql.version}</version>
             </dependency>
 
             <!--swagger -->
