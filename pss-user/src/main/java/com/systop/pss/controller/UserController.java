@@ -6,7 +6,6 @@ import com.systop.pss.common.error.BusinessException;
 import com.systop.pss.common.utils.CommonUtils;
 import com.systop.pss.common.vo.R;
 import com.systop.pss.controller.vo.UserVo;
-import com.systop.pss.mapper.UserPasswordMapper;
 import com.systop.pss.model.UserInfo;
 import com.systop.pss.model.UserPassword;
 import com.systop.pss.service.UserInfoServcie;
@@ -15,23 +14,27 @@ import com.systop.pss.service.dto.UserDto;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.joda.time.DateTime;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import sun.misc.Request;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Date;
-import java.util.List;
 import java.util.regex.Pattern;
 
-@RestController
+@Controller
 @RequestMapping("/user")
 @Api(description = "用户管理")
 public class UserController extends BaseController{
+
+    private Logger logger = LogManager.getLogger(UserController.class);
 
     @Autowired
     private UserInfoServcie userInfoServcie;
@@ -39,10 +42,27 @@ public class UserController extends BaseController{
     @Autowired
     private UserPasswordService userPasswordService;
 
+    /**
+     * 查询所有用户
+     * @return
+     */
     @RequestMapping(value = "/getList" ,method = RequestMethod.POST)
-    public List<UserInfo> getList() {
+    @ResponseBody
+    public R getList() {
 
-        return userInfoServcie.selectUserList();
+        return R.ok().data("userList",userInfoServcie.selectUserList());
+    }
+
+    @RequestMapping("/abc")
+    public String hello(Model model){
+        model.addAttribute("msg","你好");
+        return "index";
+    }
+    @RequestMapping("/index1")
+    @ResponseBody
+    public String index1() {
+        logger.info("web 启动");
+        return "index";
     }
 
     /**
@@ -52,6 +72,7 @@ public class UserController extends BaseController{
      * @return
      */
     @RequestMapping(value = "/login",method = RequestMethod.POST)
+    @ResponseBody
     public R login(HttpServletRequest request,
                         @RequestParam(value = "telPhone" ,required = true )String telPhone,
                         @RequestParam(value = "password" ,required = true )String password) throws BusinessException, UnsupportedEncodingException, NoSuchAlgorithmException {
@@ -107,6 +128,7 @@ public class UserController extends BaseController{
      */
     @ApiOperation("用户注册")
     @RequestMapping(value = "/register",method = RequestMethod.POST)
+    @ResponseBody
     public R register(HttpServletRequest request,
             @RequestParam(value = "userName",required = true)String userName,
                       @RequestParam(value = "userAge",required = true)int userAge,
@@ -176,6 +198,7 @@ public class UserController extends BaseController{
      * @return
      */
     @RequestMapping(value = "/loginout",method = RequestMethod.POST)
+    @ResponseBody
     public R loginOut(HttpServletRequest request){
         // 消除session中user
         request.getSession().removeAttribute(Contents.SESSION_USER);
@@ -187,6 +210,7 @@ public class UserController extends BaseController{
 
     @ApiOperation("用户信息修改")
     @RequestMapping(value = "/updateuser",method = RequestMethod.POST)
+    @ResponseBody
     public R updateUser(HttpServletRequest request,
                       @RequestParam(value = "uuId",required = false)String uuId,
                       @RequestParam(value = "telPhone",required = true)String telPhone,
@@ -222,6 +246,7 @@ public class UserController extends BaseController{
      * @return
      */
     @RequestMapping(value = "/deluset",method = RequestMethod.POST)
+    @ResponseBody
     public R delUser(@RequestParam(value = "uuId",required = false)String uuId){
 
         // 根基UUID 删除用户
@@ -237,6 +262,7 @@ public class UserController extends BaseController{
      * @return
      */
     @RequestMapping(value = "/getuserpwd",method = RequestMethod.POST)
+    @ResponseBody
     public R getUserPwd(HttpServletRequest request,
                             @RequestParam(value = "pwd",required = false)String pwd) throws BusinessException, UnsupportedEncodingException, NoSuchAlgorithmException {
         UserInfo userInfo = (UserInfo) request.getSession().getAttribute(Contents.SESSION_USER);
@@ -259,6 +285,7 @@ public class UserController extends BaseController{
      * @return
      */
     @RequestMapping(value = "/updateuserpwd",method = RequestMethod.POST)
+    @ResponseBody
     public R updateUserPwd(HttpServletRequest request,
                            @RequestParam(value = "uuId",required = false)String uuId,
                            @RequestParam(value = "updPwd",required = true)String updPwd,
@@ -300,6 +327,7 @@ public class UserController extends BaseController{
      * @return
      */
     @RequestMapping(value = "/getusercount",method = RequestMethod.POST)
+    @ResponseBody
     public R getUserCount(@RequestParam(value = "dept",required = false)String dept){
 
         int userCount = userInfoServcie.getUserCount(dept);
