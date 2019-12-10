@@ -41,7 +41,7 @@ public class Contents {
 	/**
 	 * session用户
 	 */
-    public static final String SESSION_USER = "user";
+    public static final String SESSION_USER = "sessionUser";
 
 	/**
 	 * 非管理员用户flag
