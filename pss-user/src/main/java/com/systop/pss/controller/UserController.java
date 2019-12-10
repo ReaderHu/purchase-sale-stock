@@ -46,17 +46,17 @@ public class UserController extends BaseController{
      * 查询所有用户
      * @return
      */
-    @RequestMapping(value = "/getList" ,method = RequestMethod.POST)
-    @ResponseBody
-    public R getList() {
-
-        return R.ok().data("userList",userInfoServcie.selectUserList());
+    @RequestMapping(value = "/getList")
+    public String getList(Model model) {
+        model.addAttribute("userList",userInfoServcie.selectUserList());
+        return "userlist";
     }
 
-    @RequestMapping("/abc")
-    public String hello(Model model){
-        model.addAttribute("msg","你好");
-        return "index";
+    @RequestMapping("/index")
+    public String hello(HttpServletRequest request,Model model){
+        model.addAttribute("msg","欢迎登录");
+        System.out.println(request.getContextPath());
+        return "login";
     }
     @RequestMapping("/index1")
     @ResponseBody
@@ -72,12 +72,12 @@ public class UserController extends BaseController{
      * @return
      */
     @RequestMapping(value = "/login",method = RequestMethod.POST)
-    @ResponseBody
-    public R login(HttpServletRequest request,
+    public String login(HttpServletRequest request,
+                        Model model,
                         @RequestParam(value = "telPhone" ,required = true )String telPhone,
                         @RequestParam(value = "password" ,required = true )String password) throws BusinessException, UnsupportedEncodingException, NoSuchAlgorithmException {
         if (!Pattern.matches(Contents.TEL_PHONE_EXP,telPhone)) {
-            return  R.setResult(ResultCodeEnum.ERROR_TELPHONE);
+//            return  R.setResult(ResultCodeEnum.ERROR_TELPHONE);
         }
 
         // 设置登录对象
@@ -94,7 +94,7 @@ public class UserController extends BaseController{
         UserInfo userInfo = userInfoServcie.login(userDto);
 
         if ( null== userInfo) {
-            return R.setResult(ResultCodeEnum.ERROR_LOGIN);
+//            return R.setResult(ResultCodeEnum.ERROR_LOGIN);
         }
         // 修改用户最后登录时间
         UserInfo updateUser = new UserInfo();
@@ -104,14 +104,15 @@ public class UserController extends BaseController{
         int updateCount = userInfoServcie.updateByPrimaryKeySelective(updateUser);
 
         if(updateCount < 0) {
-            return  R.error().message("登录超时，请重新登录");
+//            return  R.error().message("登录超时，请重新登录");
         }
 
         request.getSession().setAttribute(Contents.SESSION_USER,userInfo);
         UserVo userVo = new UserVo();
         BeanUtils.copyProperties(userInfo, userVo);
-
-        return R.ok().message(ResultCodeEnum.SUCCESS.getMessage()).data("database",userVo);
+        model.addAttribute("data",userVo);
+        return "index";
+//        return R.ok().message(ResultCodeEnum.SUCCESS.getMessage()).data("database",userVo);
     }
 
     /**
@@ -198,21 +199,20 @@ public class UserController extends BaseController{
      * @return
      */
     @RequestMapping(value = "/loginout",method = RequestMethod.POST)
-    @ResponseBody
-    public R loginOut(HttpServletRequest request){
+    public String loginOut(HttpServletRequest request,Model model){
         // 消除session中user
         request.getSession().removeAttribute(Contents.SESSION_USER);
         // 清空系统中所有的session
 //        request.getSession().invalidate();
 //        return "redicet: index";
-        return R.ok().message("用户退出登录");
+        return "login";
     }
 
     @ApiOperation("用户信息修改")
     @RequestMapping(value = "/updateuser",method = RequestMethod.POST)
-    @ResponseBody
-    public R updateUser(HttpServletRequest request,
-                      @RequestParam(value = "uuId",required = false)String uuId,
+    public String updateUser(HttpServletRequest request,
+                      Model model,
+                      @RequestParam(value = "uuId",required = true)String uuId,
                       @RequestParam(value = "telPhone",required = true)String telPhone,
                       @RequestParam(value = "department",required = true)String department) {
 
@@ -230,13 +230,21 @@ public class UserController extends BaseController{
         // 更改信息用户
         userInfo.setUpdateUser(sessionUser.getUuId());
         // 手机
-        userInfo.setTelPhone(telPhone);
+        if (StringUtils.isNotEmpty(telPhone)) {
+            userInfo.setTelPhone(telPhone);
+        }
         // 部门
-        userInfo.setDepartment(department);
+        if (StringUtils.isNotEmpty(department)) {
+            userInfo.setDepartment(department);
+        }
 
-        userInfoServcie.updateByPrimaryKeySelective(userInfo);
+        int updateCount = userInfoServcie.updateByPrimaryKeySelective(userInfo);
+        if (updateCount < 0) {
+            model.addAttribute("msg","修改信息出错，请稍后重试");
+            return "userUpdate";
+        }
 
-        return R.ok();
+        return "redirect:/user/getList";
     }
 
 
@@ -245,16 +253,16 @@ public class UserController extends BaseController{
      * @param uuId
      * @return
      */
-    @RequestMapping(value = "/deluset",method = RequestMethod.POST)
-    @ResponseBody
-    public R delUser(@RequestParam(value = "uuId",required = false)String uuId){
+    @RequestMapping(value = "/deluset",method = RequestMethod.GET)
+    public String delUser(Model model,
+            @RequestParam(value = "uuId",required = false)String uuId){
 
         // 根基UUID 删除用户
         int delCount = userInfoServcie.deleteByPrimaryKey(uuId);
         if (delCount > 0) {
-            return R.ok();
+            model.addAttribute("msg","修改信息出错，请稍后重试");
         }
-        return R.error();
+        return "redirect:/user/getList";
     }
 
     /**
@@ -321,6 +329,30 @@ public class UserController extends BaseController{
         }
         return R.setResult(ResultCodeEnum.SUCCESS_UPDATE_PWD);
     }
+
+    /**
+     * 根据用户ID获取用户信息
+     * @param request
+     * @param model
+     * @param uuId 用户ID
+     * @param view 返回页面名称
+     * @return
+     */
+    @RequestMapping("getUserbyId")
+    public String getUserByUUID(HttpServletRequest request,
+                                Model model,
+                                @RequestParam(value = "uuId",required = true)String uuId,
+                                @RequestParam(value = "view",required = true)String view){
+
+        // 查询用户
+        UserInfo userInfo = userInfoServcie.selectByPrimaryKey(uuId);
+
+        // 将用户信息保存在Model
+        model.addAttribute("user",userInfo);
+
+        return view;
+    }
+
 
     /**
      * 获取部门用户总数量（dept可为空）

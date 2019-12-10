@@ -108,10 +108,14 @@
             <artifactId>javax.servlet.jsp-api</artifactId>
             <version>2.3.1</version>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/javax.servlet/jstl -->
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>jstl</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>taglibs</groupId>
+            <artifactId>standard</artifactId>
+            <version>1.1.2</version>
         </dependency>
 
     </dependencies>
@@ -140,6 +144,7 @@
 
             <resource>
                 <directory>src/main/webapp</directory>
+                <targetPath>META-INF/resources</targetPath>
                 <includes>
                     <include>**/*.*</include>
                 </includes>
