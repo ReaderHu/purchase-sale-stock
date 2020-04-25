@@ -53,4 +53,8 @@ public class Contents {
 	 */
 	public static final String ADMIN_FLAG_0 = "0";
 
+	/**
+	 * 总用户数量
+	 */
+    public static final String USER_COUNT = "userCount";
 }

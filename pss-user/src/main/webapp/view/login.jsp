@@ -18,7 +18,7 @@
 <body class="login_bg">
 <section class="loginBox">
     <header class="loginHeader">
-        <h1>工厂管理系统</h1>
+        <h1>工厂管理系统用户总计${userCount}人</h1>
     </header>
     <section class="loginCont">
         <form class="loginForm" action="${pageContext.servletContext.contextPath}/user/login" method="post">

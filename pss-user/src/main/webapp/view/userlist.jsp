@@ -10,10 +10,6 @@
 <html>
 <head>
     <title>工厂管理系统</title>
-    <%-- 引入jquery--%>
-    <script type="text/javascript" src="${pageContext.servletContext.contextPath }/static/js/jquery-1.12.4.min.js"></script>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/public.css"/>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/style.css"/>
 </head>
 <body>
 <!--头部-->
@@ -47,7 +43,7 @@
                 <tr>
                     <td>${user.uuId}</td>
                     <td>${user.userName}</td>
-                    <td>${user.userAge}</td>
+                    <td><c:if test="${user.userSex == 1}">男</c:if><c:if test="${user.userSex ==0}">女</c:if></td>
                     <td>${user.userAge}</td>
                     <td>${user.telPhone}</td>
                     <td>${user.department}</td>
@@ -74,7 +70,6 @@
     </div>
 </div>
 <jsp:include page="/view/common/footer.jsp"/>
-<script src="${pageContext.request.contextPath}/static/js/jquery.js"></script>
 <script src="${pageContext.request.contextPath}/static/js/js.js"></script>
 <script src="${pageContext.request.contextPath}/static/js/time.js"></script>
 <script type="text/javascript">

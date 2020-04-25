@@ -1,8 +1,9 @@
 package com.systop.pss.model;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class UserInfo {
+public class UserInfo implements Serializable {
     /**
      * 用户ID
      */
@@ -14,9 +15,19 @@ public class UserInfo {
     private String userName;
 
     /**
+     * 简称
+     */
+    private String shortQuery;
+
+    /**
      * 年龄
      */
     private Integer userAge;
+
+    /**
+     * 性别
+     */
+    private Integer userSex;
 
     /**
      * 手机
@@ -44,6 +55,11 @@ public class UserInfo {
     private Date entryTime;
 
     /**
+     * 地址
+     */
+    private String userAddr;
+
+    /**
      * 离职flag
      */
     private String delFlag;
@@ -52,6 +68,11 @@ public class UserInfo {
      * 最后登录时间
      */
     private Date lastLoginTime;
+
+    /**
+     * 更新时间
+     */
+    private Date updateTime;
 
     /**
      * 更新用户
@@ -74,12 +95,28 @@ public class UserInfo {
         this.userName = userName == null ? null : userName.trim();
     }
 
+    public String getShortQuery() {
+        return shortQuery;
+    }
+
+    public void setShortQuery(String shortQuery) {
+        this.shortQuery = shortQuery == null ? null : shortQuery.trim();
+    }
+
     public Integer getUserAge() {
         return userAge;
     }
 
     public void setUserAge(Integer userAge) {
         this.userAge = userAge;
+    }
+
+    public Integer getUserSex() {
+        return userSex;
+    }
+
+    public void setUserSex(Integer userSex) {
+        this.userSex = userSex;
     }
 
     public String getTelPhone() {
@@ -122,6 +159,14 @@ public class UserInfo {
         this.entryTime = entryTime;
     }
 
+    public String getUserAddr() {
+        return userAddr;
+    }
+
+    public void setUserAddr(String userAddr) {
+        this.userAddr = userAddr == null ? null : userAddr.trim();
+    }
+
     public String getDelFlag() {
         return delFlag;
     }
@@ -136,6 +181,14 @@ public class UserInfo {
 
     public void setLastLoginTime(Date lastLoginTime) {
         this.lastLoginTime = lastLoginTime;
+    }
+
+    public Date getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(Date updateTime) {
+        this.updateTime = updateTime;
     }
 
     public String getUpdateUser() {

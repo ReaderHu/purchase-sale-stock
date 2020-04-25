@@ -1,4 +1,5 @@
 <%--
+
   Created by IntelliJ IDEA.
   User: Administrator
   Date: 2019/12/10 0010
@@ -6,11 +7,10 @@
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <html>
 <head>
     <title>工厂管理系统</title>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/public.css"/>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/style.css"/>
 </head>
 <body>
 <!--头部-->
@@ -26,7 +26,7 @@
         <div class="providerView">
             <p><strong>用户编号：</strong><span>${user.uuId}</span></p>
             <p><strong>用户名称：</strong><span>${user.userName}</span></p>
-            <p><strong>用户性别：</strong><span>${user.userAge}</span></p>
+            <p><strong>用户性别：</strong><span><c:if test="${user.userSex == 1}">男</c:if><c:if test="${user.userSex ==0}">女</c:if></span></p>
             <p><strong>出生年龄：</strong><span>${user.userAge}</span></p>
             <p><strong>用户电话：</strong><span>${user.telPhone}</span></p>
             <p><strong>用户部门：</strong><span>${user.department}</span></p>

@@ -10,6 +10,8 @@
 <head>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/public.css"/>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/style.css"/>
+    <%-- 引入jquery--%>
+    <script type="text/javascript" src="${pageContext.servletContext.contextPath }/static/js/jquery-1.12.4.min.js"></script>
 </head>
 <body>
 <!--头部-->
@@ -18,7 +20,7 @@
 
     <div class="publicHeaderR">
         <p><span style="color: #fff21b">${sessionUser.userName}</span> , 欢迎你！</p>
-        <a href="login.html">退出</a>
+        <a href="${pageContext.request.contextPath}/login/loginout">退出</a>
     </div>
 </header>
 <!--时间-->

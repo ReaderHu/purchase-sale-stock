@@ -20,6 +20,7 @@ import org.joda.time.DateTime;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,9 +28,10 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Date;
+import java.util.List;
 import java.util.regex.Pattern;
 
-@Controller
+@Controller("userController")
 @RequestMapping("/user")
 @Api(description = "用户管理")
 public class UserController extends BaseController{
@@ -42,27 +44,16 @@ public class UserController extends BaseController{
     @Autowired
     private UserPasswordService userPasswordService;
 
+
     /**
      * 查询所有用户
      * @return
      */
     @RequestMapping(value = "/getList")
     public String getList(Model model) {
-        model.addAttribute("userList",userInfoServcie.selectUserList());
+        List<UserInfo> userInfoList = userInfoServcie.selectUserList();
+        model.addAttribute("userList",userInfoList);
         return "userlist";
-    }
-
-    @RequestMapping("/index")
-    public String hello(HttpServletRequest request,Model model){
-        model.addAttribute("msg","欢迎登录");
-        System.out.println(request.getContextPath());
-        return "login";
-    }
-    @RequestMapping("/index1")
-    @ResponseBody
-    public String index1() {
-        logger.info("web 启动");
-        return "index";
     }
 
     /**
@@ -213,8 +204,8 @@ public class UserController extends BaseController{
     public String updateUser(HttpServletRequest request,
                       Model model,
                       @RequestParam(value = "uuId",required = true)String uuId,
-                      @RequestParam(value = "telPhone",required = true)String telPhone,
-                      @RequestParam(value = "department",required = true)String department) {
+                      @RequestParam(value = "telPhone",required = false)String telPhone,
+                      @RequestParam(value = "department",required = false)String department) {
 
         // 获取session中user信息
         UserInfo sessionUser = (UserInfo) request.getSession().getAttribute(Contents.SESSION_USER);
@@ -237,6 +228,8 @@ public class UserController extends BaseController{
         if (StringUtils.isNotEmpty(department)) {
             userInfo.setDepartment(department);
         }
+        // 修改时间
+        userInfo.setUpdateTime(new Date());
 
         int updateCount = userInfoServcie.updateByPrimaryKeySelective(userInfo);
         if (updateCount < 0) {
@@ -258,7 +251,8 @@ public class UserController extends BaseController{
             @RequestParam(value = "uuId",required = false)String uuId){
 
         // 根基UUID 删除用户
-        int delCount = userInfoServcie.deleteByPrimaryKey(uuId);
+//        int delCount = userInfoServcie.deleteByPrimaryKey(uuId);
+        int delCount = userInfoServcie.deleteByPrimaryKeyByDelFlag(uuId);
         if (delCount > 0) {
             model.addAttribute("msg","修改信息出错，请稍后重试");
         }
@@ -272,17 +266,35 @@ public class UserController extends BaseController{
     @RequestMapping(value = "/getuserpwd",method = RequestMethod.POST)
     @ResponseBody
     public R getUserPwd(HttpServletRequest request,
-                            @RequestParam(value = "pwd",required = false)String pwd) throws BusinessException, UnsupportedEncodingException, NoSuchAlgorithmException {
+                            @RequestParam(value = "oldPwd") String oldPwd) throws BusinessException, UnsupportedEncodingException, NoSuchAlgorithmException {
         UserInfo userInfo = (UserInfo) request.getSession().getAttribute(Contents.SESSION_USER);
 
         String userPwd = userInfoServcie.selectUserPwd(userInfo.getUuId());
-
         // MD5加密
-        pwd = CommonUtils.EncodeByMD5(pwd);
-        if (StringUtils.equals(pwd,userPwd)){
+        oldPwd = CommonUtils.EncodeByMD5(oldPwd);
+        if (!StringUtils.equals(oldPwd,userPwd)){
             return R.setResult(ResultCodeEnum.ERROR_PASSWORD);
         }
         return R.ok();
+    }
+
+    /**
+     * 获取用户密码
+     * @return
+     */
+    @RequestMapping(value = "/toPassword")
+    public String toPassword(HttpServletRequest request,
+                             Model model)  {
+        // 获取session中用户信息
+        UserInfo sessionUser = (UserInfo) request.getSession().getAttribute(Contents.SESSION_USER);
+
+        // 判断用户是否为管理员用户
+        if (StringUtils.equals(sessionUser.getAdminFlag(),Contents.ADMIN_FLAG_0)) {
+            // 查询所有用户信息
+            List<UserInfo> userInfoList = userInfoServcie.selectUserList();
+            model.addAttribute("upUserList",userInfoList);
+        }
+        return "password";
     }
 
     /**
@@ -293,31 +305,49 @@ public class UserController extends BaseController{
      * @return
      */
     @RequestMapping(value = "/updateuserpwd",method = RequestMethod.POST)
-    @ResponseBody
-    public R updateUserPwd(HttpServletRequest request,
+    @Transactional
+    public String updateUserPwd(HttpServletRequest request,
+                           Model model,
                            @RequestParam(value = "uuId",required = false)String uuId,
+                           @RequestParam(value = "oldPwd",required = false)String oldPwd,
                            @RequestParam(value = "updPwd",required = true)String updPwd,
                            @RequestParam(value = "updConfirmPwd",required = true)String updConfirmPwd) throws BusinessException, UnsupportedEncodingException, NoSuchAlgorithmException {
 
+        // 判断两次密码是否一致
         if (!StringUtils.equals(updPwd,updConfirmPwd)) {
-            return  R.setResult(ResultCodeEnum.ERROR_PASSWORD);
+            model.addAttribute("msg","请保证确认密码和新密码一致");
+            return "password";
         }
         UserPassword userPassword = new UserPassword();
         // 获取session中user信息
         UserInfo sessionUser = (UserInfo) request.getSession().getAttribute(Contents.SESSION_USER);
         if (null == sessionUser) {
-            return  R.setResult(ResultCodeEnum.ERROR_NOT_LOGIN);
+            model.addAttribute("msg","用户未登录，请返回登录页面登录后再进行修改");
+            return "password";
         }
         // 当uuid 不为空时
         if (StringUtils.isNotEmpty(uuId)) {
             // 判断user是否为管理员账户
             if (!StringUtils.equals(sessionUser.getAdminFlag(),Contents.ADMIN_FLAG_0)) {
-                return R.setResult(ResultCodeEnum.ERROR_POWER);
+                model.addAttribute("msg","权限不足");
+                return "password";
             }
+            // 当用户为管理员时
+            // 设置页面传入的uuid
             userPassword.setUuId(uuId);
         } else {
+            // 当未传入uuId时设置登录用户的uuid
             userPassword.setUuId(sessionUser.getUuId());
+            // 获取用户密码
+            String userPwd = userInfoServcie.selectUserPwd(userPassword.getUuId());
+            // 判断用户密码是否与输入的密码一致
+            if (!StringUtils.equals(CommonUtils.EncodeByMD5(oldPwd),userPwd)){
+                model.addAttribute("msg","密码不正确请重新输入");
+                return "password";
+            }
         }
+
+        // 设置usePasswork的信息
         userPassword.setPwd(CommonUtils.EncodeByMD5(updPwd));
         userPassword.setUpdateTime(new Date());
         userPassword.setUpdateUser(sessionUser.getUuId());
@@ -325,9 +355,17 @@ public class UserController extends BaseController{
         int updCount = userPasswordService.updateUserPwdByuuId(userPassword);
 
         if (updCount < 0) {
-            return R.error();
+            model.addAttribute("msg","密码更新失败");
         }
-        return R.setResult(ResultCodeEnum.SUCCESS_UPDATE_PWD);
+        // 判断用户是否为管理员用户
+        if (StringUtils.equals(sessionUser.getAdminFlag(),Contents.ADMIN_FLAG_0)) {
+            // 查询所有用户信息
+            List<UserInfo> userInfoList = userInfoServcie.selectUserList();
+            model.addAttribute("upUserList",userInfoList);
+        }
+
+        model.addAttribute("msg","密码更新成功");
+        return "password";
     }
 
     /**

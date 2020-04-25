@@ -1,6 +1,8 @@
 package com.systop.pss.common.vo;
 
 import com.systop.pss.common.constants.ResultCodeEnum;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.Map;

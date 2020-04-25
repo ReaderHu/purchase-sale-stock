@@ -21,9 +21,9 @@
     <div class="right">
         <img class="wColck" src="${pageContext.request.contextPath}/static/img/clock.jpg" alt=""/>
         <div class="wFont">
-            <h2>${user.userName}</h2>
-            <p>欢迎来到超市账单管理系统!</p>
-            <span id="hours"></span>
+            <h2>${sessionUser.userName}</h2>
+            <p>欢迎来到工厂管理系统!</p>
+            <span id="hours">系统用户总计${userCount}人</span>
         </div>
     </div>
 </section>

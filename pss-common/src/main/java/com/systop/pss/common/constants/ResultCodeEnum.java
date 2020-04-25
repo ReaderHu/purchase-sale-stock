@@ -7,7 +7,7 @@ public enum ResultCodeEnum {
 	ERROR_REGISTER(false,40001,"用户注册失败"),
 	ERROR_LOGIN(false,40002,"用户或者密码不正确，请重新输入"),
 	ERROR_TELPHONE(false,40003,"手机号格式不正确，请输入正确的手机号"),
-	ERROR_PASSWORD(false,40004,"确认密码不正确，请重新输入"),
+	ERROR_PASSWORD(false,40004,"密码不正确，请重新输入"),
 	ERROR_POWER(false,40005,"权限不足，请登录管理员账户"),
 	ERROR_NOT_LOGIN(false,40006,"用户未登录，请登录后重试"),
 

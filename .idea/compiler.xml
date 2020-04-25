@@ -6,11 +6,11 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="pss-dataservice" />
-        <module name="pss-user" />
-        <module name="pss-common" />
         <module name="pss-order" />
+        <module name="pss-common" />
+        <module name="pss-user" />
         <module name="pss-timer" />
+        <module name="pss-dataservice" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
@@ -25,11 +25,11 @@
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="paa-parents" options="-parameters" />
-      <module name="pss-common" options="-parameters" />
-      <module name="pss-dataservice" options="-parameters" />
-      <module name="pss-order" options="-parameters" />
-      <module name="pss-timer" options="-parameters" />
-      <module name="pss-user" options="-parameters" />
+      <module name="pss-common" options="-parameters -verbose -bootclasspath &quot;C:/Program Files/Java/jdk1.8.0_151/jre\lib\rt.jar;C:/Program Files/Java/jdk1.8.0_151/jre\lib\jec.jar&quot;" />
+      <module name="pss-dataservice" options="-parameters -verbose -bootclasspath &quot;C:/Program Files/Java/jdk1.8.0_151/jre\lib\rt.jar;C:/Program Files/Java/jdk1.8.0_151/jre\lib\jec.jar&quot;" />
+      <module name="pss-order" options="-parameters -verbose -bootclasspath &quot;C:/Program Files/Java/jdk1.8.0_151/jre\lib\rt.jar;C:/Program Files/Java/jdk1.8.0_151/jre\lib\jec.jar&quot;" />
+      <module name="pss-timer" options="-parameters -verbose -bootclasspath &quot;C:/Program Files/Java/jdk1.8.0_151/jre\lib\rt.jar;C:/Program Files/Java/jdk1.8.0_151/jre\lib\jec.jar&quot;" />
+      <module name="pss-user" options="-parameters -verbose -bootclasspath &quot;C:/Program Files/Java/jdk1.8.0_151/jre\lib\rt.jar;C:/Program Files/Java/jdk1.8.0_151/jre\lib\jec.jar&quot;" />
     </option>
   </component>
 </project>

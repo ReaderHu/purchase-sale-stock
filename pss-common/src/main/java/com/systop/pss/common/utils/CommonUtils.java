@@ -1,5 +1,6 @@
 package com.systop.pss.common.utils;
 
+import org.springframework.stereotype.Component;
 import sun.misc.BASE64Encoder;
 
 import java.io.UnsupportedEncodingException;
@@ -27,4 +28,5 @@ public class CommonUtils {
         return newStr;
 
     }
+
 }

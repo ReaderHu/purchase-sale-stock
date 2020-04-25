@@ -7,6 +7,9 @@ import com.systop.pss.model.UserPassword;
 import com.systop.pss.service.UserInfoServcie;
 import com.systop.pss.service.dto.UserDto;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,9 +17,15 @@ import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 @Service("userInfoServiceImpl")
 public class UserInfoServiceImpl implements UserInfoServcie {
+    /**
+     * RedisTemplate 这个bean是springboot自动配置好的，可以直接使用
+     */
+    @Autowired
+    private RedisTemplate redisTemplate;
 
     @Resource
     private UserInfoMapper userInfoMapper;
@@ -60,7 +69,17 @@ public class UserInfoServiceImpl implements UserInfoServcie {
      */
     @Override
     public List<UserInfo> selectUserList() {
-        return userInfoMapper.selectUserList();
+        redisTemplate.setKeySerializer(new StringRedisSerializer());
+        List<UserInfo> userInfoList = (List<UserInfo>)redisTemplate.opsForValue().get("userList");
+
+        if (null == userInfoList) {
+            userInfoList = userInfoMapper.selectUserList();
+            redisTemplate.opsForValue().set("userList",userInfoList ,15, TimeUnit.MINUTES);
+            System.out.println("数据库查询");
+        } else {
+            System.out.println("查询redis缓存");
+        }
+        return userInfoList;
     }
 
 
@@ -150,9 +169,16 @@ public class UserInfoServiceImpl implements UserInfoServcie {
      */
     @Override
     public int getUserCount(String dept) {
-        Map<String,Object> selectMap = new HashMap<>();
 
+        Map<String,Object> selectMap = new HashMap<>();
         selectMap.put("dept",dept);
         return userInfoMapper.getUserCount(selectMap);
+    }
+
+    @Override
+    public int deleteByPrimaryKeyByDelFlag(String uuId) {
+
+
+        return userInfoMapper.deleteByprimaryKeyByDelFlag(uuId);
     }
 }

@@ -9,8 +9,7 @@
 <html>
 <head>
     <title>工厂管理系统</title>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/public.css"/>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/style.css"/>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/static/bootstrap/css/bootstrap.css"/>
 </head>
 <body>
 <!--头部-->

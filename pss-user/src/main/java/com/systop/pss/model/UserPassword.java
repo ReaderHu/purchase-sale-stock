@@ -1,8 +1,10 @@
 package com.systop.pss.model;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class UserPassword {
+public class UserPassword implements Serializable {
+    private static final long serialVersionUID = -3038669366298482759L;
     /**
      * ID
      */

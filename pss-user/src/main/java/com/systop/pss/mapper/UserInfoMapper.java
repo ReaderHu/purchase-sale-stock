@@ -35,4 +35,11 @@ public interface UserInfoMapper {
      * @return
      */
     int getUserCount(Map<String, Object> selectMap);
+
+    /**
+     * 伦理删除数据
+     * @param uuId
+     * @return
+     */
+    int deleteByprimaryKeyByDelFlag(String uuId);
 }

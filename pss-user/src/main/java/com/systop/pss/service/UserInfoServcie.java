@@ -90,4 +90,11 @@ public interface UserInfoServcie {
      * @return
      */
     int getUserCount(String dept);
+
+    /**
+     * 伦理删除数据
+     * @param uuId
+     * @return
+     */
+    int deleteByPrimaryKeyByDelFlag(String uuId);
 }
