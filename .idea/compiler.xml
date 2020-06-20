@@ -6,10 +6,10 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="pss-order" />
-        <module name="pss-common" />
-        <module name="pss-user" />
         <module name="pss-timer" />
+        <module name="pss-order" />
+        <module name="pss-user" />
+        <module name="pss-common" />
         <module name="pss-dataservice" />
       </profile>
     </annotationProcessing>
