@@ -39,7 +39,7 @@
         <json.version>20170516</json.version>
         <pss-version>1.0.0</pss-version>
         <log4j.version>2.3</log4j.version>
-        <mysql.version>5.1.47</mysql.version>
+        <mysql.version>8.0.28</mysql.version>
         <jsp-api.version>2.3.1</jsp-api.version>
     </properties>
 
